@@ -8,6 +8,13 @@
       "when": 1793524724041,
       "tag": "0000_academy_rental_foundation",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793524750552,
+      "tag": "0001_academy_revoke_anon_read",
+      "breakpoints": true
     }
   ]
 }
