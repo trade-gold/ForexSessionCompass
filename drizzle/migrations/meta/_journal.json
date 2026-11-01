@@ -15,6 +15,13 @@
       "when": 1793524750552,
       "tag": "0001_academy_revoke_anon_read",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793524770838,
+      "tag": "0002_academy_self_access_status",
+      "breakpoints": true
     }
   ]
 }

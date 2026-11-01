@@ -98,6 +98,16 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      get_my_academy_access: {
+        Args: never
+        Returns: {
+          academy_name: string
+          activated_at: string
+          expires_at: string
+          is_active: boolean
+          status: string
+        }[]
+      }
       is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
