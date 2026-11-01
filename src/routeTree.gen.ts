@@ -10,33 +10,232 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AcademyRouteImport } from './routes/academy'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as ConverterRouteImport } from './routes/converter'
+import { Route as DemoRouteImport } from './routes/demo'
+import { Route as DisclaimerRouteImport } from './routes/disclaimer'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as OverlapRouteImport } from './routes/overlap'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as UtcToLocalRouteImport } from './routes/utc-to-local'
+import { Route as WhiteLabelRouteImport } from './routes/white-label'
+import { Route as SessionsIndexRouteImport } from './routes/sessions.index'
+import { Route as SessionsSessionRouteImport } from './routes/sessions.$session'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AcademyRoute = AcademyRouteImport.update({
+  id: '/academy',
+  path: '/academy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConverterRoute = ConverterRouteImport.update({
+  id: '/converter',
+  path: '/converter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoRoute = DemoRouteImport.update({
+  id: '/demo',
+  path: '/demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DisclaimerRoute = DisclaimerRouteImport.update({
+  id: '/disclaimer',
+  path: '/disclaimer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OverlapRoute = OverlapRouteImport.update({
+  id: '/overlap',
+  path: '/overlap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UtcToLocalRoute = UtcToLocalRouteImport.update({
+  id: '/utc-to-local',
+  path: '/utc-to-local',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WhiteLabelRoute = WhiteLabelRouteImport.update({
+  id: '/white-label',
+  path: '/white-label',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SessionsIndexRoute = SessionsIndexRouteImport.update({
+  id: '/sessions/',
+  path: '/sessions/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SessionsSessionRoute = SessionsSessionRouteImport.update({
+  id: '/sessions/$session',
+  path: '/sessions/$session',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/academy': typeof AcademyRoute
+  '/contact': typeof ContactRoute
+  '/converter': typeof ConverterRoute
+  '/demo': typeof DemoRoute
+  '/disclaimer': typeof DisclaimerRoute
+  '/login': typeof LoginRoute
+  '/overlap': typeof OverlapRoute
+  '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
+  '/utc-to-local': typeof UtcToLocalRoute
+  '/white-label': typeof WhiteLabelRoute
+  '/sessions/$session': typeof SessionsSessionRoute
+  '/sessions/': typeof SessionsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/academy': typeof AcademyRoute
+  '/contact': typeof ContactRoute
+  '/converter': typeof ConverterRoute
+  '/demo': typeof DemoRoute
+  '/disclaimer': typeof DisclaimerRoute
+  '/login': typeof LoginRoute
+  '/overlap': typeof OverlapRoute
+  '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
+  '/utc-to-local': typeof UtcToLocalRoute
+  '/white-label': typeof WhiteLabelRoute
+  '/sessions/$session': typeof SessionsSessionRoute
+  '/sessions': typeof SessionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/academy': typeof AcademyRoute
+  '/contact': typeof ContactRoute
+  '/converter': typeof ConverterRoute
+  '/demo': typeof DemoRoute
+  '/disclaimer': typeof DisclaimerRoute
+  '/login': typeof LoginRoute
+  '/overlap': typeof OverlapRoute
+  '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
+  '/utc-to-local': typeof UtcToLocalRoute
+  '/white-label': typeof WhiteLabelRoute
+  '/sessions/$session': typeof SessionsSessionRoute
+  '/sessions/': typeof SessionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/academy'
+    | '/contact'
+    | '/converter'
+    | '/demo'
+    | '/disclaimer'
+    | '/login'
+    | '/overlap'
+    | '/privacy'
+    | '/profile'
+    | '/register'
+    | '/utc-to-local'
+    | '/white-label'
+    | '/sessions/$session'
+    | '/sessions/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/about'
+    | '/academy'
+    | '/contact'
+    | '/converter'
+    | '/demo'
+    | '/disclaimer'
+    | '/login'
+    | '/overlap'
+    | '/privacy'
+    | '/profile'
+    | '/register'
+    | '/utc-to-local'
+    | '/white-label'
+    | '/sessions/$session'
+    | '/sessions'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/academy'
+    | '/contact'
+    | '/converter'
+    | '/demo'
+    | '/disclaimer'
+    | '/login'
+    | '/overlap'
+    | '/privacy'
+    | '/profile'
+    | '/register'
+    | '/utc-to-local'
+    | '/white-label'
+    | '/sessions/$session'
+    | '/sessions/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  AcademyRoute: typeof AcademyRoute
+  ContactRoute: typeof ContactRoute
+  ConverterRoute: typeof ConverterRoute
+  DemoRoute: typeof DemoRoute
+  DisclaimerRoute: typeof DisclaimerRoute
+  LoginRoute: typeof LoginRoute
+  OverlapRoute: typeof OverlapRoute
+  PrivacyRoute: typeof PrivacyRoute
+  ProfileRoute: typeof ProfileRoute
+  RegisterRoute: typeof RegisterRoute
+  UtcToLocalRoute: typeof UtcToLocalRoute
+  WhiteLabelRoute: typeof WhiteLabelRoute
+  SessionsSessionRoute: typeof SessionsSessionRoute
+  SessionsIndexRoute: typeof SessionsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +247,131 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/academy': {
+      id: '/academy'
+      path: '/academy'
+      fullPath: '/academy'
+      preLoaderRoute: typeof AcademyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/converter': {
+      id: '/converter'
+      path: '/converter'
+      fullPath: '/converter'
+      preLoaderRoute: typeof ConverterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo': {
+      id: '/demo'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/disclaimer': {
+      id: '/disclaimer'
+      path: '/disclaimer'
+      fullPath: '/disclaimer'
+      preLoaderRoute: typeof DisclaimerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/overlap': {
+      id: '/overlap'
+      path: '/overlap'
+      fullPath: '/overlap'
+      preLoaderRoute: typeof OverlapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/utc-to-local': {
+      id: '/utc-to-local'
+      path: '/utc-to-local'
+      fullPath: '/utc-to-local'
+      preLoaderRoute: typeof UtcToLocalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/white-label': {
+      id: '/white-label'
+      path: '/white-label'
+      fullPath: '/white-label'
+      preLoaderRoute: typeof WhiteLabelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sessions/': {
+      id: '/sessions/'
+      path: '/sessions'
+      fullPath: '/sessions/'
+      preLoaderRoute: typeof SessionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sessions/$session': {
+      id: '/sessions/$session'
+      path: '/sessions/$session'
+      fullPath: '/sessions/$session'
+      preLoaderRoute: typeof SessionsSessionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  AcademyRoute: AcademyRoute,
+  ContactRoute: ContactRoute,
+  ConverterRoute: ConverterRoute,
+  DemoRoute: DemoRoute,
+  DisclaimerRoute: DisclaimerRoute,
+  LoginRoute: LoginRoute,
+  OverlapRoute: OverlapRoute,
+  PrivacyRoute: PrivacyRoute,
+  ProfileRoute: ProfileRoute,
+  RegisterRoute: RegisterRoute,
+  UtcToLocalRoute: UtcToLocalRoute,
+  WhiteLabelRoute: WhiteLabelRoute,
+  SessionsSessionRoute: SessionsSessionRoute,
+  SessionsIndexRoute: SessionsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
