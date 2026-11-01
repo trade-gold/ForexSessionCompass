@@ -71,8 +71,8 @@ function UtcLocal() {
         {[
           { label: "UTC", z: "UTC" },
           { label: viewTz, z: viewTz },
-        ].map((c) => (
-          <div key={c.label} className="panel p-5">
+        ].map((c, i) => (
+          <div key={i} className="panel p-5">
             <p className="font-mono text-xs uppercase text-muted-foreground">{c.label}</p>
             <p className="font-mono text-4xl font-bold tabular-nums text-up">
               {now ? formatTime(now, c.z, true) : "--:--:--"}
