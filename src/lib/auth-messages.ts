@@ -4,6 +4,9 @@ export function describeAuthError(error: unknown): string {
     error instanceof Error ? error.message : details && "message" in details ? String(details.message) : String(error ?? ""),
     details && "code" in details ? String(details.code) : "",
   ].join(" ").toLowerCase();
+  if (message.includes("this email address is not allowed") || message.includes("email_address_invalid")) {
+    return "Enter a real email address that can receive a confirmation email.";
+  }
   if (message.includes("email_provider_disabled") || message.includes("email logins are disabled")) {
     return "Email sign-in is currently unavailable. Please contact the site owner.";
   }

@@ -6,6 +6,9 @@ import { supabase } from "@/lib/supabase";
 import { describeAuthError } from "@/lib/auth-messages";
 
 describe("Cloud account configuration", () => {
+  it("rejects undeliverable placeholder email addresses clearly", () => {
+    expect(describeAuthError({ message: "This email address is not allowed." })).toBe("Enter a real email address that can receive a confirmation email.");
+  });
   it("uses the managed publishable-key client even without the legacy anon variable", () => {
     expect(supabase).toBe(client);
   });
