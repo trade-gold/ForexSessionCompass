@@ -1,5 +1,10 @@
 # Sitemap repair
 
+# Cloud account repair
+- [ ] Verify Cloud readiness, existing migrations, and email authentication settings.
+- [ ] Correct the account client configuration without changing original migrations or features.
+- [ ] Test registration, login, and academy profile access against this project's Cloud.
+
 - [x] Confirm real public pages and session guide URLs.
 - [x] Add a static XML sitemap and its robots.txt directive.
 - [x] Validate XML, crawling rules, and served URLs; clarify publication status.
