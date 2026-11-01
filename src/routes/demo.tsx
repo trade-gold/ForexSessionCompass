@@ -56,7 +56,7 @@ function DemoPage() {
       </PageHeader>
 
       <section className="mb-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {SESSIONS.map((s) => {
+        {now && SESSIONS.map((s) => {
           const st = getSessionStatus(s, now);
           return (
             <div key={s.id} className="panel p-4 transition-transform hover:-translate-y-0.5">

@@ -15,6 +15,7 @@ const NAV = [
   { to: "/utc-to-local", label: "UTC → Local" },
   { to: "/sessions", label: "Sessions" },
   { to: "/white-label", label: "White-Label & Pricing" },
+  { to: "/demo", label: "Buyer Demo" },
 ] as const;
 
 const ACCOUNT_LINK =

@@ -14,6 +14,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AcademyRouteImport } from './routes/academy'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ConverterRouteImport } from './routes/converter'
+import { Route as DemoRouteImport } from './routes/demo'
 import { Route as DisclaimerRouteImport } from './routes/disclaimer'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as OverlapRouteImport } from './routes/overlap'
@@ -48,6 +49,11 @@ const ContactRoute = ContactRouteImport.update({
 const ConverterRoute = ConverterRouteImport.update({
   id: '/converter',
   path: '/converter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoRoute = DemoRouteImport.update({
+  id: '/demo',
+  path: '/demo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DisclaimerRoute = DisclaimerRouteImport.update({
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/academy': typeof AcademyRoute
   '/contact': typeof ContactRoute
   '/converter': typeof ConverterRoute
+  '/demo': typeof DemoRoute
   '/disclaimer': typeof DisclaimerRoute
   '/login': typeof LoginRoute
   '/overlap': typeof OverlapRoute
@@ -124,6 +131,7 @@ export interface FileRoutesByTo {
   '/academy': typeof AcademyRoute
   '/contact': typeof ContactRoute
   '/converter': typeof ConverterRoute
+  '/demo': typeof DemoRoute
   '/disclaimer': typeof DisclaimerRoute
   '/login': typeof LoginRoute
   '/overlap': typeof OverlapRoute
@@ -142,6 +150,7 @@ export interface FileRoutesById {
   '/academy': typeof AcademyRoute
   '/contact': typeof ContactRoute
   '/converter': typeof ConverterRoute
+  '/demo': typeof DemoRoute
   '/disclaimer': typeof DisclaimerRoute
   '/login': typeof LoginRoute
   '/overlap': typeof OverlapRoute
@@ -161,6 +170,7 @@ export interface FileRouteTypes {
     | '/academy'
     | '/contact'
     | '/converter'
+    | '/demo'
     | '/disclaimer'
     | '/login'
     | '/overlap'
@@ -178,6 +188,7 @@ export interface FileRouteTypes {
     | '/academy'
     | '/contact'
     | '/converter'
+    | '/demo'
     | '/disclaimer'
     | '/login'
     | '/overlap'
@@ -195,6 +206,7 @@ export interface FileRouteTypes {
     | '/academy'
     | '/contact'
     | '/converter'
+    | '/demo'
     | '/disclaimer'
     | '/login'
     | '/overlap'
@@ -213,6 +225,7 @@ export interface RootRouteChildren {
   AcademyRoute: typeof AcademyRoute
   ContactRoute: typeof ContactRoute
   ConverterRoute: typeof ConverterRoute
+  DemoRoute: typeof DemoRoute
   DisclaimerRoute: typeof DisclaimerRoute
   LoginRoute: typeof LoginRoute
   OverlapRoute: typeof OverlapRoute
@@ -260,6 +273,13 @@ declare module '@tanstack/react-router' {
       path: '/converter'
       fullPath: '/converter'
       preLoaderRoute: typeof ConverterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo': {
+      id: '/demo'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/disclaimer': {
@@ -341,6 +361,7 @@ const rootRouteChildren: RootRouteChildren = {
   AcademyRoute: AcademyRoute,
   ContactRoute: ContactRoute,
   ConverterRoute: ConverterRoute,
+  DemoRoute: DemoRoute,
   DisclaimerRoute: DisclaimerRoute,
   LoginRoute: LoginRoute,
   OverlapRoute: OverlapRoute,
