@@ -1,5 +1,13 @@
 {
   "version": "7",
   "dialect": "postgresql",
-  "entries": []
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1793524724041,
+      "tag": "0000_academy_rental_foundation",
+      "breakpoints": true
+    }
+  ]
 }

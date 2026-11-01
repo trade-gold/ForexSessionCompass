@@ -14,13 +14,91 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      academies: {
+        Row: {
+          academy_name: string
+          activated_at: string | null
+          contact_name: string
+          country: string | null
+          created_at: string
+          email: string
+          expires_at: string | null
+          id: string
+          phone: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          academy_name: string
+          activated_at?: string | null
+          contact_name: string
+          country?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string | null
+          id: string
+          phone?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          academy_name?: string
+          activated_at?: string | null
+          contact_name?: string
+          country?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string | null
+          id?: string
+          phone?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      admins: {
+        Row: {
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      admin_set_academy_access: {
+        Args: { p_academy_id: string; p_action: string }
+        Returns: {
+          academy_name: string
+          activated_at: string | null
+          contact_name: string
+          country: string | null
+          created_at: string
+          email: string
+          expires_at: string | null
+          id: string
+          phone: string | null
+          status: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "academies"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
