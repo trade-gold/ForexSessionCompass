@@ -37,6 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [accessError, setAccessError] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [authReady, setAuthReady] = useState(false);
   const requestCounterRef = useRef(0);
 
   const loadAccountState = useCallback(async (activeSession: Session | null) => {
@@ -88,15 +89,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     const client = supabase;
-    const { data } = client.auth.onAuthStateChange((_event, nextSession) => {
+    const { data } = client.auth.onAuthStateChange((event, nextSession) => {
+      if (event === "TOKEN_REFRESHED") return;
       setSession(nextSession);
-      void loadAccountState(nextSession);
+      setAuthReady(true);
     });
     return () => {
       requestCounterRef.current++;
       data.subscription.unsubscribe();
     };
   }, [loadAccountState]);
+
+  // Auth callbacks must return before starting requests that need the auth lock.
+  useEffect(() => {
+    if (authReady) void loadAccountState(session);
+  }, [authReady, session, loadAccountState]);
 
   const refreshAccess = useCallback(async () => {
     await loadAccountState(session);

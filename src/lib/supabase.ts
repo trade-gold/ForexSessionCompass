@@ -1,16 +1,6 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { supabase as cloudClient } from "@/integrations/supabase/client";
 
-const url = import.meta.env["VITE_SUPABASE_URL"];
-const anonKey = import.meta.env["VITE_SUPABASE_ANON_KEY"];
-
-// Null when configuration is missing, so public pages still load; account pages show a notice.
-export const supabase: SupabaseClient | null =
-  url && anonKey
-    ? createClient(url, anonKey, {
-        auth: {
-          persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: true,
-        },
-      })
-    : null;
+// One Cloud client for account pages and server-function bearer attachment.
+// The managed client uses VITE_SUPABASE_PUBLISHABLE_KEY and preview-safe storage.
+export const supabase: SupabaseClient = cloudClient;

@@ -24,6 +24,10 @@ export const Route = createFileRoute("/login")({
     meta: [
       { title: "Log in | Forex Time Tools" },
       { name: "description", content: "Log in to your academy account for Forex Session Compass." },
+      { property: "og:title", content: "Log in | Forex Time Tools" },
+      { property: "og:description", content: "Log in to your academy account for Forex Session Compass." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],
   }),

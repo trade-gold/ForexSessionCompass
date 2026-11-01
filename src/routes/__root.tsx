@@ -14,7 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { BrandProvider, useBrand } from "@/components/BrandProvider";
 import { AuthProvider } from "@/components/AuthProvider";
-import { Header, Footer, OG_IMAGE_URL } from "@/components/site";
+import { Header, Footer } from "@/components/site";
 
 function NotFoundComponent() {
   return (
@@ -105,9 +105,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:site_name", content: "Forex Time Tools" },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: OG_IMAGE_URL },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: OG_IMAGE_URL },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
