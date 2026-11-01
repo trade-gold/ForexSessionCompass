@@ -71,11 +71,194 @@ export type Database = {
         }
         Relationships: []
       }
+      app_settings: {
+        Row: {
+          id: number
+          payment_instructions: string
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          payment_instructions?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          payment_instructions?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      owner_emails: {
+        Row: {
+          email: string
+        }
+        Insert: {
+          email: string
+        }
+        Update: {
+          email?: string
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          admin_note: string | null
+          amount_cents: number | null
+          created_at: string
+          currency: string
+          id: string
+          method: string
+          plan_id: string
+          reference: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          admin_note?: string | null
+          amount_cents?: number | null
+          created_at?: string
+          currency?: string
+          id?: string
+          method: string
+          plan_id: string
+          reference: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          admin_note?: string | null
+          amount_cents?: number | null
+          created_at?: string
+          currency?: string
+          id?: string
+          method?: string
+          plan_id?: string
+          reference?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plans: {
+        Row: {
+          currency: string
+          description: string
+          features: string[]
+          id: string
+          is_active: boolean
+          name: string
+          period_days: number
+          price_cents: number | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          currency?: string
+          description?: string
+          features?: string[]
+          id: string
+          is_active?: boolean
+          name: string
+          period_days?: number
+          price_cents?: number | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          currency?: string
+          description?: string
+          features?: string[]
+          id?: string
+          is_active?: boolean
+          name?: string
+          period_days?: number
+          price_cents?: number | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          expires_at: string
+          id: string
+          plan_id: string
+          starts_at: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          expires_at: string
+          id?: string
+          plan_id: string
+          starts_at?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          expires_at?: string
+          id?: string
+          plan_id?: string
+          starts_at?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      admin_review_payment: {
+        Args: { p_approve: boolean; p_note?: string; p_payment_id: string }
+        Returns: {
+          admin_note: string | null
+          amount_cents: number | null
+          created_at: string
+          currency: string
+          id: string
+          method: string
+          plan_id: string
+          reference: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "payments"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       admin_set_academy_access: {
         Args: { p_academy_id: string; p_action: string }
         Returns: {
@@ -98,6 +281,67 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      admin_set_payment_instructions: {
+        Args: { p_text: string }
+        Returns: undefined
+      }
+      admin_set_subscription: {
+        Args: { p_action: string; p_plan_id: string; p_user_id: string }
+        Returns: {
+          expires_at: string
+          id: string
+          plan_id: string
+          starts_at: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "subscriptions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      admin_stats: {
+        Args: never
+        Returns: {
+          active_subscriptions: number
+          pending_payments: number
+          total_users: number
+          verified_payments: number
+        }[]
+      }
+      admin_update_plan: {
+        Args: {
+          p_currency: string
+          p_description: string
+          p_features: string[]
+          p_id: string
+          p_is_active: boolean
+          p_name: string
+          p_period_days: number
+          p_price_cents: number
+        }
+        Returns: {
+          currency: string
+          description: string
+          features: string[]
+          id: string
+          is_active: boolean
+          name: string
+          period_days: number
+          price_cents: number | null
+          sort_order: number
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "plans"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       get_my_academy_access: {
         Args: never
         Returns: {
@@ -108,7 +352,42 @@ export type Database = {
           status: string
         }[]
       }
+      get_my_entitlements: {
+        Args: never
+        Returns: {
+          expires_at: string
+          features: string[]
+          is_admin: boolean
+          plan_id: string
+          plan_name: string
+          status: string
+        }[]
+      }
+      has_feature: { Args: { p_feature: string }; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
+      submit_payment: {
+        Args: { p_method: string; p_plan_id: string; p_reference: string }
+        Returns: {
+          admin_note: string | null
+          amount_cents: number | null
+          created_at: string
+          currency: string
+          id: string
+          method: string
+          plan_id: string
+          reference: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "payments"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       [_ in never]: never
