@@ -55,7 +55,7 @@ describe("Site verification, SEO canonicals across all 14 public pages & secret 
 
     const allPageResults: {
       path: string;
-      headOut: { meta?: unknown[]; links?: unknown[] } | undefined;
+      headOut: unknown;
     }[] = [];
 
     for (const p of staticPages) {
@@ -75,8 +75,8 @@ describe("Site verification, SEO canonicals across all 14 public pages & secret 
 
     for (const { path, headOut } of allPageResults) {
       const expectedUrl = `${SITE_ORIGIN}${path}`;
-      const metaList = (headOut?.meta ?? []) as Record<string, string>[];
-      const linkList = (headOut?.links ?? []) as Record<string, string>[];
+      const metaList = ((headOut as { meta?: unknown[] } | undefined)?.meta ?? []) as Record<string, string>[];
+      const linkList = ((headOut as { links?: unknown[] } | undefined)?.links ?? []) as Record<string, string>[];
 
       // Canonical URL
       expect(linkList).toContainEqual({ rel: "canonical", href: expectedUrl });
