@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { OG_IMAGE_URL, SITE_ORIGIN } from "@/components/site";
+import { SITE_ORIGIN } from "@/components/site";
 import { Route as RootRoute } from "@/routes/__root";
 import { Route as HomeRoute } from "@/routes/index";
 import { Route as ConverterRoute } from "@/routes/converter";
@@ -35,7 +35,7 @@ describe("Site verification, SEO canonicals across all 14 public pages & secret 
     });
   });
 
-  it("emits canonical URL, Open Graph title/description/image/url, and Twitter metadata on all 14 public pages", async () => {
+  it("emits canonical URL and social metadata without unrelated image URLs on all 14 public pages", async () => {
     expect(existsSync("public/og-image.png")).toBe(true);
 
     const staticPages = [
@@ -90,20 +90,17 @@ describe("Site verification, SEO canonicals across all 14 public pages & secret 
       // Open Graph title, description, image, url, type
       expect(metaList).toContainEqual({
         property: "og:title",
-        content: titleEntry!["title"]!,
+        content: titleEntry?.["title"],
       });
       expect(metaList).toContainEqual({
         property: "og:description",
-        content: descEntry!["content"]!,
+        content: descEntry?.["content"],
       });
       expect(metaList).toContainEqual({
         property: "og:url",
         content: expectedUrl,
       });
-      expect(metaList).toContainEqual({
-        property: "og:image",
-        content: OG_IMAGE_URL,
-      });
+      expect(metaList.some((m) => m["property"] === "og:image")).toBe(false);
       expect(metaList).toContainEqual({
         property: "og:type",
         content: "website",
@@ -116,23 +113,20 @@ describe("Site verification, SEO canonicals across all 14 public pages & secret 
       });
       expect(metaList).toContainEqual({
         name: "twitter:title",
-        content: titleEntry!["title"]!,
+        content: titleEntry?.["title"],
       });
       expect(metaList).toContainEqual({
         name: "twitter:description",
-        content: descEntry!["content"]!,
+        content: descEntry?.["content"],
       });
-      expect(metaList).toContainEqual({
-        name: "twitter:image",
-        content: OG_IMAGE_URL,
-      });
+      expect(metaList.some((m) => m["name"] === "twitter:image")).toBe(false);
     }
   });
 
   it("includes a safe .env.example and configures .gitignore to exclude .env secrets while allowing .env.example", () => {
     const envExample = readFileSync(".env.example", "utf8");
     expect(envExample).toContain("VITE_SUPABASE_URL=");
-    expect(envExample).toContain("VITE_SUPABASE_ANON_KEY=");
+    expect(envExample).toContain("VITE_SUPABASE_PUBLISHABLE_KEY=");
     expect(envExample).not.toMatch(/eyJ[A-Za-z0-9_-]{20,}/);
     expect(envExample).not.toMatch(/service_role/i);
 
@@ -142,8 +136,8 @@ describe("Site verification, SEO canonicals across all 14 public pages & secret 
     expect(gitignore).toContain("!.env.example");
 
     const supaSource = readFileSync("src/lib/supabase.ts", "utf8");
-    expect(supaSource).toContain("VITE_SUPABASE_URL");
-    expect(supaSource).toContain("VITE_SUPABASE_ANON_KEY");
+    expect(supaSource).toContain('@/integrations/supabase/client');
+    expect(supaSource).not.toContain("VITE_SUPABASE_ANON_KEY");
     expect(supaSource).not.toMatch(/eyJ[A-Za-z0-9_-]{20,}/);
     expect(supaSource).not.toMatch(/service_role/i);
   });

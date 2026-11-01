@@ -1,5 +1,10 @@
 # Sitemap repair
 
+# Cloud account repair
+- [x] Verify Cloud readiness, all three migrations applied verbatim, and email authentication settings (confirmation remains on).
+- [x] Correct the account client configuration and auth-lock contention; refresh a stale managed privileged binding without exposing credentials.
+- [x] Test real registration, confirmed-account login, private academy profile reads, denied unauthorized activation, and logout; remove disposable test accounts.
+
 - [x] Confirm real public pages and session guide URLs.
 - [x] Add a static XML sitemap and its robots.txt directive.
 - [x] Validate XML, crawling rules, and served URLs; clarify publication status.

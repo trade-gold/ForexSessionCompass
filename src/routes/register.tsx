@@ -24,6 +24,10 @@ export const Route = createFileRoute("/register")({
     meta: [
       { title: "Register your academy | Forex Time Tools" },
       { name: "description", content: "Register your academy account for Forex Session Compass." },
+      { property: "og:title", content: "Register your academy | Forex Time Tools" },
+      { property: "og:description", content: "Register your academy account for Forex Session Compass." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -78,10 +82,7 @@ function RegisterPage() {
   const onSubmit = async (values: RegisterValues) => {
     if (!supabase) return;
     setServerError(null);
-    const redirectOrigin =
-      typeof window !== "undefined"
-        ? `${window.location.origin}/login?confirmed=1`
-        : "https://forex-session-compass.lovable.app/login?confirmed=1";
+    const redirectOrigin = `${window.location.origin}/login?confirmed=1`;
     const { data, error } = await supabase.auth.signUp({
       email: values.email,
       password: values.password,

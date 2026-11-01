@@ -1,5 +1,21 @@
 export function describeAuthError(error: unknown): string {
-  const message = error instanceof Error ? error.message.toLowerCase() : String(error ?? "").toLowerCase();
+  const details = error && typeof error === "object" ? error : null;
+  const message = [
+    error instanceof Error ? error.message : details && "message" in details ? String(details.message) : String(error ?? ""),
+    details && "code" in details ? String(details.code) : "",
+  ].join(" ").toLowerCase();
+  if (message.includes("this email address is not allowed") || message.includes("email_address_invalid")) {
+    return "Enter a real email address that can receive a confirmation email.";
+  }
+  if (message.includes("email_provider_disabled") || message.includes("email logins are disabled")) {
+    return "Email sign-in is currently unavailable. Please contact the site owner.";
+  }
+  if (message.includes("signup_disabled") || message.includes("signups not allowed")) {
+    return "New account registration is currently closed.";
+  }
+  if (message.includes("database error saving new user")) {
+    return "Your account could not be created. Please contact the site owner.";
+  }
   if (message.includes("already registered") || message.includes("user_already_exists")) {
     return "An account with this email already exists. Log in instead.";
   }

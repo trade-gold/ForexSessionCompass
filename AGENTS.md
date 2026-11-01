@@ -15,3 +15,7 @@
 
 - URL branding is validated in src/lib/white-label.ts and shared through BrandProvider; localStorage is read only after hydration to keep SSR stable.
 - White-label exports are honest hosted embed wrappers; independent offline bundles are customization service deliverables, not mislabeled iframe downloads.
+
+- All account features reuse the managed Cloud client through src/lib/supabase.ts so browser sessions and server-function bearer attachment share one storage and publishable-key configuration.
+- AuthProvider schedules account reads in a separate effect, never inside onAuthStateChange, to avoid auth lock contention.
+- Preserve historical Supabase SQL files verbatim; apply them through the migration tool, which records executed SQL in the Drizzle migration journal.
