@@ -100,7 +100,7 @@ describe("Site verification, SEO canonicals across all 14 public pages & secret 
         property: "og:url",
         content: expectedUrl,
       });
-      expect(metaList.some((m) => m.property === "og:image")).toBe(false);
+      expect(metaList.some((m) => m["property"] === "og:image")).toBe(false);
       expect(metaList).toContainEqual({
         property: "og:type",
         content: "website",
@@ -119,7 +119,7 @@ describe("Site verification, SEO canonicals across all 14 public pages & secret 
         name: "twitter:description",
         content: descEntry?.["content"],
       });
-      expect(metaList.some((m) => m.name === "twitter:image")).toBe(false);
+      expect(metaList.some((m) => m["name"] === "twitter:image")).toBe(false);
     }
   });
 
