@@ -16,6 +16,7 @@ const NAV = [
   { to: "/sessions", label: "Sessions" },
   { to: "/white-label", label: "White-Label & Pricing" },
   { to: "/demo", label: "Buyer Demo" },
+  { to: "/pricing", label: "Pricing" },
 ] as const;
 
 const ACCOUNT_LINK =
@@ -47,6 +48,11 @@ function AccountLinks({ onNavigate }: { onNavigate?: () => void }) {
   }
   return (
     <>
+      {isAdmin && (
+        <Link to="/admin" onClick={onNavigate} className={ACCOUNT_LINK} activeProps={{ className: "bg-accent text-foreground font-medium" }}>
+          Owner Console
+        </Link>
+      )}
       <Link
         to="/academy"
         search={(prev) => prev}

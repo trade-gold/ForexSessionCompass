@@ -12,12 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AcademyRouteImport } from './routes/academy'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ConverterRouteImport } from './routes/converter'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as DisclaimerRouteImport } from './routes/disclaimer'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as OverlapRouteImport } from './routes/overlap'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as RegisterRouteImport } from './routes/register'
@@ -39,6 +41,11 @@ const AboutRoute = AboutRouteImport.update({
 const AcademyRoute = AcademyRouteImport.update({
   id: '/academy',
   path: '/academy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -69,6 +76,11 @@ const LoginRoute = LoginRouteImport.update({
 const OverlapRoute = OverlapRouteImport.update({
   id: '/overlap',
   path: '/overlap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -111,12 +123,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/academy': typeof AcademyRoute
+  '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/converter': typeof ConverterRoute
   '/demo': typeof DemoRoute
   '/disclaimer': typeof DisclaimerRoute
   '/login': typeof LoginRoute
   '/overlap': typeof OverlapRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
@@ -129,12 +143,14 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/academy': typeof AcademyRoute
+  '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/converter': typeof ConverterRoute
   '/demo': typeof DemoRoute
   '/disclaimer': typeof DisclaimerRoute
   '/login': typeof LoginRoute
   '/overlap': typeof OverlapRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
@@ -148,12 +164,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/academy': typeof AcademyRoute
+  '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/converter': typeof ConverterRoute
   '/demo': typeof DemoRoute
   '/disclaimer': typeof DisclaimerRoute
   '/login': typeof LoginRoute
   '/overlap': typeof OverlapRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
@@ -168,12 +186,14 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/academy'
+    | '/admin'
     | '/contact'
     | '/converter'
     | '/demo'
     | '/disclaimer'
     | '/login'
     | '/overlap'
+    | '/pricing'
     | '/privacy'
     | '/profile'
     | '/register'
@@ -186,12 +206,14 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/academy'
+    | '/admin'
     | '/contact'
     | '/converter'
     | '/demo'
     | '/disclaimer'
     | '/login'
     | '/overlap'
+    | '/pricing'
     | '/privacy'
     | '/profile'
     | '/register'
@@ -204,12 +226,14 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/academy'
+    | '/admin'
     | '/contact'
     | '/converter'
     | '/demo'
     | '/disclaimer'
     | '/login'
     | '/overlap'
+    | '/pricing'
     | '/privacy'
     | '/profile'
     | '/register'
@@ -223,12 +247,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AcademyRoute: typeof AcademyRoute
+  AdminRoute: typeof AdminRoute
   ContactRoute: typeof ContactRoute
   ConverterRoute: typeof ConverterRoute
   DemoRoute: typeof DemoRoute
   DisclaimerRoute: typeof DisclaimerRoute
   LoginRoute: typeof LoginRoute
   OverlapRoute: typeof OverlapRoute
+  PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
   RegisterRoute: typeof RegisterRoute
@@ -259,6 +285,13 @@ declare module '@tanstack/react-router' {
       path: '/academy'
       fullPath: '/academy'
       preLoaderRoute: typeof AcademyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -301,6 +334,13 @@ declare module '@tanstack/react-router' {
       path: '/overlap'
       fullPath: '/overlap'
       preLoaderRoute: typeof OverlapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -359,12 +399,14 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AcademyRoute: AcademyRoute,
+  AdminRoute: AdminRoute,
   ContactRoute: ContactRoute,
   ConverterRoute: ConverterRoute,
   DemoRoute: DemoRoute,
   DisclaimerRoute: DisclaimerRoute,
   LoginRoute: LoginRoute,
   OverlapRoute: OverlapRoute,
+  PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
   RegisterRoute: RegisterRoute,
