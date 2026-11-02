@@ -19,3 +19,4 @@
 - All account features reuse the managed Cloud client through src/lib/supabase.ts so browser sessions and server-function bearer attachment share one storage and publishable-key configuration.
 - AuthProvider schedules account reads in a separate effect, never inside onAuthStateChange, to avoid auth lock contention.
 - Preserve historical Supabase SQL files verbatim; apply them through the migration tool, which records executed SQL in the Drizzle migration journal.
+- Plans and account pages share PlanFeatures, using live plan definitions and FeatureGate; subscription inclusion and unreleased tool availability stay distinct to avoid promising nonexistent tools or confusing academy rentals with subscriptions.
