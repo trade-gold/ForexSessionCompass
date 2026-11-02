@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useEntitlements, usePlans } from "@/hooks/use-entitlements";
 import { supabase } from "@/lib/supabase";
 import { FEATURES, formatPrice, type FeatureKey } from "@/lib/plans";
+import { PlanFeatures } from "@/components/PlanFeatures";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -58,6 +59,7 @@ function PricingPage() {
           </section>
         ))}
       </div>
+      <PlanFeatures />
       {session ? <PaymentSection /> : (
         <p className="mt-8 text-sm">
           <Link to="/register" className="text-primary underline">Create an account</Link> or{" "}

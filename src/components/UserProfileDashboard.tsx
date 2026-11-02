@@ -22,6 +22,7 @@ import {
 import { useAuth } from "@/components/AuthProvider";
 import { useBrand, useClockFormat } from "@/components/BrandProvider";
 import { ZoneSelect } from "@/components/site";
+import { PlanFeatures } from "@/components/PlanFeatures";
 import { Button } from "@/components/ui/button";
 import { useLocalZone, useNow } from "@/hooks/use-now";
 import {
@@ -537,6 +538,7 @@ export function UserProfileDashboard({ initialSection = "overview" }: { initialS
       </div>
 
       {/* Main Layout: Dark Charcoal/Navy Sidebar + Active Content Area */}
+      <PlanFeatures account />
       <div className="grid gap-6 lg:grid-cols-[16.5rem_1fr]">
         {/* Sidebar Navigation */}
         <aside className="rounded-xl border bg-panel p-3 lg:self-start" aria-label="Dashboard sections">

@@ -27,4 +27,15 @@ describe("plan entitlements", () => {
   it("unset price is shown honestly", () => {
     expect(formatPrice(plan({}))).toBe("Price not set yet");
   });
+  it("Elite access includes both Pro and Elite features from its entitlement list", () => {
+    const e = ent({ plan_id: "elite", features: ["overlap_advanced", "workspace", "risk_calculator", "discipline", "planner", "journal", "events", "reports", "alerts"] });
+    expect(hasFeature(e, "risk_calculator")).toBe(true);
+    expect(hasFeature(e, "journal")).toBe(true);
+    expect(hasFeature(e, "alerts")).toBe(true);
+  });
+  it("owner-configured plans determine feature inclusion, not hardcoded tier names", () => {
+    const plans = [plan({ features: ["planner"] }), plan({ id: "elite", sort_order: 2, features: ["journal"] })];
+    expect(planForFeature(plans, "journal")?.id).toBe("elite");
+    expect(planForFeature(plans, "risk_calculator")).toBeNull();
+  });
 });
