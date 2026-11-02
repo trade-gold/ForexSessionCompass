@@ -63,7 +63,7 @@ function Stats() {
     queryFn: async () => {
       const { data, error } = await supabase.rpc("admin_stats");
       if (error) throw error;
-      return (data as Array<Record<string, number>>)[0];
+      return ((data as unknown as Array<{ total_users: number; active_subscriptions: number; pending_payments: number; verified_payments: number }>)[0]);
     },
   });
   const items = [
