@@ -61,6 +61,15 @@ describe("repository security guards", () => {
     expect(gitignore).toMatch(/^!\.env\.example$/m);
   });
 
+  it("bakes the public backend connection into builds so published sites can reach Lovable Cloud", () => {
+    const config = read(join(ROOT, "vite.config.ts"));
+    for (const key of ["VITE_SUPABASE_URL", "VITE_SUPABASE_PUBLISHABLE_KEY"]) {
+      expect(config).toContain(key);
+    }
+    expect(config).toMatch(/sb_publishable_/);
+    expect(config).not.toMatch(/service_role|sb_secret_/i);
+  });
+
   it("avoids raw HTML / code-eval sinks outside the shadcn chart helper", () => {
     for (const f of appSource) {
       const text = read(f);
