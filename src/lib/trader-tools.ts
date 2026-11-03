@@ -257,7 +257,7 @@ export function evaluateDisciplineState(
   rules: DisciplineRules,
   log: DailyDisciplineLog,
   now: Date,
-  totalChecklistCount = DEFAULT_DISCIPLINE_CHECKLIST.length,
+  totalChecklistCount: number = DEFAULT_DISCIPLINE_CHECKLIST.length,
 ): DisciplineEvaluation {
   const tradesRemaining = Math.max(0, rules.maxDailyTrades - log.tradesTaken);
   const lossBufferRemaining = Math.max(
