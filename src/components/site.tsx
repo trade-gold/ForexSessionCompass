@@ -14,6 +14,7 @@ const NAV = [
   { to: "/overlap", label: "Overlaps" },
   { to: "/utc-to-local", label: "UTC → Local" },
   { to: "/sessions", label: "Sessions" },
+  { to: "/tools", label: "Trader Suite" },
   { to: "/white-label", label: "White-Label & Pricing" },
   { to: "/demo", label: "Buyer Demo" },
   { to: "/pricing", label: "Pricing" },

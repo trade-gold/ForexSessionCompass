@@ -20,9 +20,9 @@ import {
   User,
 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
+import { useEntitlements } from "@/hooks/use-entitlements";
 import { useBrand, useClockFormat } from "@/components/BrandProvider";
 import { ZoneSelect } from "@/components/site";
-import { PlanFeatures } from "@/components/PlanFeatures";
 import { Button } from "@/components/ui/button";
 import { useLocalZone, useNow } from "@/hooks/use-now";
 import {
@@ -53,6 +53,7 @@ import {
   canAccessPremiumAcademyFeatures,
   daysRemaining,
   describeMembershipPlan,
+  resolveUnifiedAccess,
   parseAdminAcademyList,
   validateProfileUpdateInput,
   type AcademyAccess,
@@ -140,6 +141,7 @@ const SECTIONS: {
 
 export function UserProfileDashboard({ initialSection = "overview" }: { initialSection?: DashboardSectionId | undefined }) {
   const { session, access, profile, isAdmin, accessError, loading, refreshAccess, signOut } = useAuth();
+  const entitlementsQuery = useEntitlements();
   const { fmt, setFmt, preferredTz, setPreferredTz } = useBrand();
   const formatClockTime = useClockFormat();
   const localZone = useLocalZone();
@@ -276,7 +278,7 @@ export function UserProfileDashboard({ initialSection = "overview" }: { initialS
     );
   }
 
-  const effectiveAccess: AcademyAccess | null =
+  const rawAccess: AcademyAccess | null =
     access ??
     (profile
       ? {
@@ -289,10 +291,16 @@ export function UserProfileDashboard({ initialSection = "overview" }: { initialS
         }
       : null);
 
+  const { effectiveAccess, unifiedPlanLabel } = resolveUnifiedAccess(
+    rawAccess,
+    entitlementsQuery.data ?? null,
+    profile?.academy_name ?? "Personal Account",
+  );
+
   const state: AccessState = effectiveAccess ? accessState(effectiveAccess) : "pending";
   const isPremiumUnlocked = canAccessPremiumAcademyFeatures(effectiveAccess);
   const remainingDays = effectiveAccess && now ? daysRemaining(effectiveAccess, now) : null;
-  const planName = describeMembershipPlan(effectiveAccess);
+  const planName = unifiedPlanLabel || describeMembershipPlan(effectiveAccess);
 
   const meta = (session.user.user_metadata ?? {}) as Record<string, unknown>;
   const displayName =
@@ -538,7 +546,6 @@ export function UserProfileDashboard({ initialSection = "overview" }: { initialS
       </div>
 
       {/* Main Layout: Dark Charcoal/Navy Sidebar + Active Content Area */}
-      <PlanFeatures account />
       <div className="grid gap-6 lg:grid-cols-[16.5rem_1fr]">
         {/* Sidebar Navigation */}
         <aside className="rounded-xl border bg-panel p-3 lg:self-start" aria-label="Dashboard sections">

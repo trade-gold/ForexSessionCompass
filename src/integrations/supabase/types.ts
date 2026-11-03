@@ -17,7 +17,9 @@ export type Database = {
       academies: {
         Row: {
           academy_name: string
+          academy_slug: string | null
           activated_at: string | null
+          brand_config: Json
           contact_name: string
           country: string | null
           created_at: string
@@ -30,7 +32,9 @@ export type Database = {
         }
         Insert: {
           academy_name: string
+          academy_slug?: string | null
           activated_at?: string | null
+          brand_config?: Json
           contact_name: string
           country?: string | null
           created_at?: string
@@ -43,7 +47,9 @@ export type Database = {
         }
         Update: {
           academy_name?: string
+          academy_slug?: string | null
           activated_at?: string | null
+          brand_config?: Json
           contact_name?: string
           country?: string | null
           created_at?: string
@@ -53,6 +59,33 @@ export type Database = {
           phone?: string | null
           status?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      admin_audit_logs: {
+        Row: {
+          action: string
+          admin_user_id: string
+          created_at: string
+          details: Json
+          id: string
+          target_user_id: string | null
+        }
+        Insert: {
+          action: string
+          admin_user_id: string
+          created_at?: string
+          details?: Json
+          id?: string
+          target_user_id?: string | null
+        }
+        Update: {
+          action?: string
+          admin_user_id?: string
+          created_at?: string
+          details?: Json
+          id?: string
+          target_user_id?: string | null
         }
         Relationships: []
       }
@@ -86,6 +119,48 @@ export type Database = {
           id?: number
           payment_instructions?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      economic_risk_events: {
+        Row: {
+          currency: string
+          event_time: string
+          id: string
+          impact: string
+          notes: string
+          post_window_minutes: number
+          pre_window_minutes: number
+          source_label: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          currency: string
+          event_time: string
+          id?: string
+          impact: string
+          notes?: string
+          post_window_minutes?: number
+          pre_window_minutes?: number
+          source_label?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          currency?: string
+          event_time?: string
+          id?: string
+          impact?: string
+          notes?: string
+          post_window_minutes?: number
+          pre_window_minutes?: number
+          source_label?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -193,6 +268,42 @@ export type Database = {
         }
         Relationships: []
       }
+      session_planner_configs: {
+        Row: {
+          alert_lead_minutes: number
+          notifications_enabled: boolean
+          overlap_alerts: boolean
+          preferred_sessions: string[]
+          preferred_windows: Json
+          prep_checklist: Json
+          updated_at: string
+          user_id: string
+          workspace_config: Json
+        }
+        Insert: {
+          alert_lead_minutes?: number
+          notifications_enabled?: boolean
+          overlap_alerts?: boolean
+          preferred_sessions?: string[]
+          preferred_windows?: Json
+          prep_checklist?: Json
+          updated_at?: string
+          user_id: string
+          workspace_config?: Json
+        }
+        Update: {
+          alert_lead_minutes?: number
+          notifications_enabled?: boolean
+          overlap_alerts?: boolean
+          preferred_sessions?: string[]
+          preferred_windows?: Json
+          prep_checklist?: Json
+          updated_at?: string
+          user_id?: string
+          workspace_config?: Json
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           expires_at: string
@@ -231,6 +342,105 @@ export type Database = {
           },
         ]
       }
+      trade_journal_entries: {
+        Row: {
+          created_at: string
+          direction: string
+          entry_price: number
+          exit_price: number
+          id: string
+          lot_size: number
+          mistake_tag: string
+          notes: string
+          outcome: string
+          pair: string
+          pnl_amount: number
+          r_multiple: number
+          session_id: string
+          stop_loss: number | null
+          strategy_tag: string
+          take_profit: number | null
+          traded_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          direction: string
+          entry_price: number
+          exit_price: number
+          id?: string
+          lot_size?: number
+          mistake_tag?: string
+          notes?: string
+          outcome: string
+          pair: string
+          pnl_amount: number
+          r_multiple?: number
+          session_id: string
+          stop_loss?: number | null
+          strategy_tag?: string
+          take_profit?: number | null
+          traded_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          direction?: string
+          entry_price?: number
+          exit_price?: number
+          id?: string
+          lot_size?: number
+          mistake_tag?: string
+          notes?: string
+          outcome?: string
+          pair?: string
+          pnl_amount?: number
+          r_multiple?: number
+          session_id?: string
+          stop_loss?: number | null
+          strategy_tag?: string
+          take_profit?: number | null
+          traded_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      trader_discipline_rules: {
+        Row: {
+          checklist_items: Json
+          cooldown_minutes: number
+          daily_log: Json
+          max_daily_loss_amount: number
+          max_daily_trades: number
+          max_risk_percent: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          checklist_items?: Json
+          cooldown_minutes?: number
+          daily_log?: Json
+          max_daily_loss_amount?: number
+          max_daily_trades?: number
+          max_risk_percent?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          checklist_items?: Json
+          cooldown_minutes?: number
+          daily_log?: Json
+          max_daily_loss_amount?: number
+          max_daily_trades?: number
+          max_risk_percent?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -263,7 +473,9 @@ export type Database = {
         Args: { p_academy_id: string; p_action: string }
         Returns: {
           academy_name: string
+          academy_slug: string | null
           activated_at: string | null
+          brand_config: Json
           contact_name: string
           country: string | null
           created_at: string
@@ -361,6 +573,15 @@ export type Database = {
           plan_id: string
           plan_name: string
           status: string
+        }[]
+      }
+      get_verified_academy_brand: {
+        Args: { p_slug: string }
+        Returns: {
+          academy_name: string
+          academy_slug: string
+          brand_config: Json
+          is_verified: boolean
         }[]
       }
       has_feature: { Args: { p_feature: string }; Returns: boolean }

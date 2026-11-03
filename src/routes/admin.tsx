@@ -38,9 +38,11 @@ function AdminPage() {
   }
   return (
     <main className="mx-auto max-w-6xl space-y-8 px-4 py-8">
-      <PageHeader eyebrow="Owner" title="Owner console">
-        You have full access to every premium feature. Academy rentals are still managed in the{" "}
-        <Link to="/academy" className="underline">dashboard</Link>.
+      <PageHeader eyebrow="Owner & Administrator Console" title="Owner Console">
+        You have automatic owner access to every Pro and Elite feature without purchasing a subscription. Manage subscription plans, payment verifications, user entitlements,{" "}
+        <Link to="/tools" className="text-info underline">Trader Suite tools</Link>,{" "}
+        <Link to="/white-label" className="text-info underline">White-Label settings</Link>, and{" "}
+        <Link to="/academy" className="text-info underline">Academy rentals</Link>.
       </PageHeader>
       <Stats />
       <Payments />
@@ -63,14 +65,14 @@ function Stats() {
     queryFn: async () => {
       const { data, error } = await supabase.rpc("admin_stats");
       if (error) throw error;
-      return ((data as unknown as Array<{ total_users: number; active_subscriptions: number; pending_payments: number; verified_payments: number }>)[0]);
+      return (data as Array<Record<string, number>>)[0];
     },
   });
   const items = [
-    ["Registered users", q.data?.total_users],
-    ["Active subscriptions", q.data?.active_subscriptions],
-    ["Payments awaiting review", q.data?.pending_payments],
-    ["Verified payments", q.data?.verified_payments],
+    ["Registered users", q.data?.["total_users"]],
+    ["Active subscriptions", q.data?.["active_subscriptions"]],
+    ["Payments awaiting review", q.data?.["pending_payments"]],
+    ["Verified payments", q.data?.["verified_payments"]],
   ] as const;
   return (
     <section className="grid gap-3 sm:grid-cols-4">
@@ -84,6 +86,7 @@ function Stats() {
 function Payments() {
   const qc = useQueryClient();
   const [err, setErr] = useErr();
+  const [notesById, setNotesById] = useState<Record<string, string>>({});
   const q = useQuery({
     queryKey: ["admin_payments"],
     queryFn: async () => {
@@ -94,7 +97,7 @@ function Payments() {
   });
   const emails = useEmails();
   async function review(id: string, approve: boolean) {
-    const note = approve ? "" : (window.prompt("Reason for rejection (optional)") ?? "");
+    const note = notesById[id]?.trim() ?? "";
     setErr(null);
     const { error } = await supabase.rpc("admin_review_payment", { p_payment_id: id, p_approve: approve, p_note: note });
     if (error) setErr(error.message);
@@ -116,12 +119,20 @@ function Payments() {
                 <td className="pr-2">{p.method} · {p.reference}</td>
                 <td className="pr-2">{new Date(p.created_at).toLocaleDateString()}</td>
                 <td className="pr-2 font-medium">{p.status}</td>
-                <td className="whitespace-nowrap">
+                <td className="whitespace-nowrap py-2">
                   {p.status === "submitted" && (
-                    <>
-                      <Button size="sm" onClick={() => review(p.id, true)}>Verify & activate</Button>{" "}
-                      <Button size="sm" variant="outline" onClick={() => review(p.id, false)}>Reject</Button>
-                    </>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <input
+                        type="text"
+                        aria-label="Admin note"
+                        placeholder="Note / rejection reason (optional)"
+                        className="rounded border bg-background px-2 py-1 text-xs"
+                        value={notesById[p.id] ?? ""}
+                        onChange={(e) => setNotesById({ ...notesById, [p.id]: e.target.value })}
+                      />
+                      <Button size="sm" onClick={() => void review(p.id, true)}>Verify & activate</Button>
+                      <Button size="sm" variant="outline" onClick={() => void review(p.id, false)}>Reject</Button>
+                    </div>
                   )}
                 </td>
               </tr>
@@ -191,9 +202,9 @@ function Subscriptions() {
                     <select aria-label="Plan" className="rounded border bg-background px-2 py-1" value={choice[u.id] ?? s?.plan_id ?? "pro"} onChange={(e) => setChoice({ ...choice, [u.id]: e.target.value })}>
                       {paid.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
                     </select>{" "}
-                    <Button size="sm" onClick={() => act(u.id, "activate")}>Activate / extend</Button>{" "}
-                    {s && <Button size="sm" variant="outline" onClick={() => act(u.id, "suspend")}>Suspend</Button>}{" "}
-                    {s && <Button size="sm" variant="outline" onClick={() => act(u.id, "cancel")}>Cancel</Button>}
+                    <Button size="sm" onClick={() => void act(u.id, "activate")}>Activate / extend</Button>{" "}
+                    {s && <Button size="sm" variant="outline" onClick={() => void act(u.id, "suspend")}>Suspend</Button>}{" "}
+                    {s && <Button size="sm" variant="outline" onClick={() => void act(u.id, "cancel")}>Cancel</Button>}
                   </td>
                 </tr>
               );
@@ -257,7 +268,7 @@ function PlanEditor({ plan }: { plan: Plan }) {
           <input type="checkbox" checked={f.is_active} onChange={(e) => setF({ ...f, is_active: e.target.checked })} /> Plan available for sale
         </label>
       )}
-      <Button size="sm" onClick={save}>Save {f.name}</Button>
+      <Button size="sm" onClick={() => void save()}>Save {f.name}</Button>
       {msg && <p className="text-xs">{msg}</p>}
     </div>
   );
@@ -285,7 +296,7 @@ function Instructions() {
     <section className={card}>
       <h2 className="font-semibold">Payment instructions shown to customers</h2>
       <Textarea className="mt-2" rows={5} value={text} onChange={(e) => setText(e.target.value)} placeholder="e.g. Pay via UPI to … then submit the reference number." />
-      <Button size="sm" className="mt-2" onClick={save}>Save instructions</Button>
+      <Button size="sm" className="mt-2" onClick={() => void save()}>Save instructions</Button>
       {msg && <p className="mt-1 text-xs">{msg}</p>}
     </section>
   );

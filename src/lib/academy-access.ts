@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { Entitlements } from "./plans";
 
 const accessSchema = z.object({
   academy_name: z.string(),
@@ -95,6 +96,37 @@ export function describeMembershipPlan(access: AcademyAccess | null): string {
   if (state === "pending") return "Registered Account (Pending Activation)";
   if (state === "expired") return "30-Day Academy Rental Plan (Expired)";
   return "Academy Account (Suspended)";
+}
+
+/**
+ * Unifies the membership display across `public.academies` and `public.subscriptions`
+ * so users who upgrade on `/pricing` or via `/admin` never see a split-brain status on `/profile`.
+ */
+export function resolveUnifiedAccess(
+  access: AcademyAccess | null,
+  entitlements?: Entitlements | null,
+  fallbackAcademyName = "Personal Account",
+): {
+  effectiveAccess: AcademyAccess | null;
+  unifiedPlanLabel: string;
+} {
+  if (entitlements && (entitlements.is_admin || (entitlements.plan_id !== "free" && entitlements.status === "active"))) {
+    const merged: AcademyAccess = {
+      academy_name: access?.academy_name ?? fallbackAcademyName,
+      status: "active",
+      activated_at: access?.activated_at ?? new Date().toISOString(),
+      expires_at: entitlements.expires_at ?? access?.expires_at ?? null,
+      is_active: true,
+    };
+    return {
+      effectiveAccess: merged,
+      unifiedPlanLabel: entitlements.plan_name || describeMembershipPlan(merged),
+    };
+  }
+  return {
+    effectiveAccess: access,
+    unifiedPlanLabel: describeMembershipPlan(access),
+  };
 }
 
 /**

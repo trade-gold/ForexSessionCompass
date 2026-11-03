@@ -29,6 +29,34 @@
       "when": 1793527142055,
       "tag": "0003_subscription_plans_payments",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793529000000,
+      "tag": "0004_trader_productivity_suite",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793620800000,
+      "tag": "0005_security_and_commercial_unification",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793674202310,
+      "tag": "0006_trader_productivity_suite",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793674259223,
+      "tag": "0007_security_and_commercial_unification",
+      "breakpoints": true
     }
   ]
 }

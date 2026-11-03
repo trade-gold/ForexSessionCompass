@@ -20,10 +20,10 @@
 - [x] Implement Academy Owner Branding Studio, Shareable Student Link Generator, Profile Editor, and Administrator Academy Management Console (`/academy`).
 - [x] Add Multi-Timezone Desk Clocks, Saved Timezone Profiles, DST badges, US/UK DST gap indicator, and 24-hour visual overlap bars.
 - [x] Preserve all existing pages, verification tags, sitemap, design, and IANA calculations; test central flows.
+
 # Premium platform (staged)
-- [x] Add a shared Pro/Elite feature catalogue to Plans and account pages with current subscription status, existing entitlement gates, and honest availability labels; verify signed-in access.
 - [x] Stage 1: plans (Free/Pro/Elite, owner-configurable), subscriptions, manual payment review, owner console, feature gate, owner auto-admin on confirmed email.
-- [ ] Stage 2: Risk & position calculator, Discipline guardian (Pro).
-- [ ] Stage 3: Session planner, multi-timezone workspace, advanced overlap (Pro).
-- [ ] Stage 4: Trade journal + analytics, manual economic event planner, reports, alerts (Elite).
-- [ ] Stage 5: full production audit report.
+- [x] Stage 2: Risk & position calculator, Discipline guardian (Pro) — `/tools` (`src/routes/tools.tsx`, `src/lib/trader-tools.ts`, `drizzle/migrations/0004_trader_productivity_suite.sql`).
+- [x] Stage 3: Session planner, multi-timezone workspace, advanced overlap (Pro) — `/tools?tool=planner`.
+- [x] Stage 4: Trade journal + analytics, manual economic event planner, reports, alerts (Elite) — `/tools?tool=journal` & `/tools?tool=events`.
+- [x] Stage 5: Full production audit report and automated unit tests (`src/test/trader-tools.test.ts`).

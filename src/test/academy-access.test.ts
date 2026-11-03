@@ -9,6 +9,7 @@ import {
   parseAcademyProfileRow,
   parseAdminAcademyList,
   parseAdminAcademyRow,
+  resolveUnifiedAccess,
   validateProfileUpdateInput,
   type AcademyAccess,
 } from "@/lib/academy-access";
@@ -19,6 +20,7 @@ import {
   configSearch,
   escapeHtml,
   parseBrandConfig,
+  sanitizeAcademySlug,
 } from "@/lib/white-label";
 
 const base: AcademyAccess = {
@@ -29,11 +31,26 @@ const base: AcademyAccess = {
   is_active: false,
 };
 
-describe("academy access states & membership plans", () => {
+describe("academy access states & unified membership plans", () => {
   it("shows pending accounts as pending and describes plan accurately", () => {
     expect(accessState(base)).toBe("pending");
     expect(canAccessPremiumAcademyFeatures(base)).toBe(false);
     expect(describeMembershipPlan(base)).toBe("Registered Account (Pending Activation)");
+  });
+
+  it("unifies paid subscriptions with academy membership state (eliminates split-brain)", () => {
+    const unified = resolveUnifiedAccess(base, {
+      plan_id: "elite",
+      plan_name: "Elite",
+      status: "active",
+      expires_at: "2030-01-01T00:00:00Z",
+      is_admin: false,
+      features: ["journal", "alerts"],
+    });
+    expect(unified.effectiveAccess?.is_active).toBe(true);
+    expect(unified.effectiveAccess?.status).toBe("active");
+    expect(unified.unifiedPlanLabel).toBe("Elite");
+    expect(canAccessPremiumAcademyFeatures(unified.effectiveAccess)).toBe(true);
   });
 
   it("shows suspended accounts as deactivated", () => {
@@ -146,7 +163,7 @@ describe("parseAcademyAccess, user profile validation & administrator academy va
   });
 });
 
-describe("white-label branding isolation & auth error messages", () => {
+describe("white-label branding isolation, slug sanitization & auth error messages", () => {
   it("isolates multiple academy configurations and validates primary & secondary colors", () => {
     expect(ACADEMY_PRESETS.length).toBeGreaterThanOrEqual(3);
     for (const preset of ACADEMY_PRESETS) {
@@ -159,6 +176,9 @@ describe("white-label branding isolation & auth error messages", () => {
       expect(brandedURL(roundtrip)).toContain("brand=");
     }
 
+    expect(sanitizeAcademySlug("Apex-Pip-01")).toBe("apex-pip-01");
+    expect(sanitizeAcademySlug("bad<script>slug")).toBeUndefined();
+
     // Rejects malicious or invalid inputs
     const sanitized = parseBrandConfig({
       brand: "Valid Academy",
@@ -166,11 +186,13 @@ describe("white-label branding isolation & auth error messages", () => {
       accent: "not-a-color",
       accent2: "#123456",
       tz: "Invalid/Zone",
+      academy: "../evil",
     });
     expect(sanitized.logo).toBeUndefined();
     expect(sanitized.accent).toBeUndefined();
     expect(sanitized.accent2).toBe("#123456");
     expect(sanitized.tz).toBeUndefined();
+    expect(sanitized.academy).toBeUndefined();
   });
 
   it("maps authentication and authorization errors to clear user messages", () => {
@@ -181,7 +203,7 @@ describe("white-label branding isolation & auth error messages", () => {
     expect(describeAuthError(new Error("Not authorized (42501)"))).toContain("not authorized");
   });
 
-  it("prevents XSS, protocol injection, and comma truncation in white-label configs", () => {
+  it("prevents XSS, protocol injection, URL credential injection, and comma truncation in white-label configs", () => {
     for (const badLogo of [
       "javascript:1",
       "data:text/x",
@@ -189,6 +211,7 @@ describe("white-label branding isolation & auth error messages", () => {
       "http://x.co",
       "<script>x",
       'https://example.com/a"onload="alert(1)',
+      "https://user:pass@evil.co/logo.png",
     ]) {
       expect(parseBrandConfig({ logo: badLogo }).logo).toBeUndefined();
     }
