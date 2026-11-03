@@ -50,6 +50,13 @@
       "when": 1793674202310,
       "tag": "0006_trader_productivity_suite",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793674259223,
+      "tag": "0007_security_and_commercial_unification",
+      "breakpoints": true
     }
   ]
 }
