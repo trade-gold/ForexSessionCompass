@@ -56,20 +56,18 @@ describe("repository security guards", () => {
       expect(n).toMatch(/^VITE_SUPABASE_(URL|PUBLISHABLE_KEY)$/);
     }
     const gitignore = read(join(ROOT, ".gitignore"));
-    // The managed .env must ship with published builds; local variants stay ignored.
-    expect(gitignore).not.toMatch(/^\.env$/m);
+    expect(gitignore).toMatch(/^\.env$/m);
     expect(gitignore).toMatch(/^\.env\.\*$/m);
     expect(gitignore).toMatch(/^!\.env\.example$/m);
   });
 
-  it("keeps the shipped .env limited to public backend settings", () => {
-    let env = "";
-    try {
-      env = read(join(ROOT, ".env"));
-    } catch {
-      return;
+  it("bakes the public backend connection into builds so published sites can reach Lovable Cloud", () => {
+    const config = read(join(ROOT, "vite.config.ts"));
+    for (const key of ["VITE_SUPABASE_URL", "VITE_SUPABASE_PUBLISHABLE_KEY"]) {
+      expect(config).toContain(key);
     }
-    expect(env).not.toMatch(/SERVICE_ROLE|sb_secret_|DB_PASSWORD/i);
+    expect(config).toMatch(/sb_publishable_/);
+    expect(config).not.toMatch(/service_role|sb_secret_/i);
   });
 
   it("avoids raw HTML / code-eval sinks outside the shadcn chart helper", () => {
