@@ -23,6 +23,7 @@ import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as UtcToLocalRouteImport } from './routes/utc-to-local'
 import { Route as WhiteLabelRouteImport } from './routes/white-label'
 import { Route as SessionsIndexRouteImport } from './routes/sessions.index'
@@ -98,6 +99,11 @@ const RegisterRoute = RegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ToolsRoute = ToolsRouteImport.update({
+  id: '/tools',
+  path: '/tools',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UtcToLocalRoute = UtcToLocalRouteImport.update({
   id: '/utc-to-local',
   path: '/utc-to-local',
@@ -134,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/tools': typeof ToolsRoute
   '/utc-to-local': typeof UtcToLocalRoute
   '/white-label': typeof WhiteLabelRoute
   '/sessions/$session': typeof SessionsSessionRoute
@@ -154,6 +161,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/tools': typeof ToolsRoute
   '/utc-to-local': typeof UtcToLocalRoute
   '/white-label': typeof WhiteLabelRoute
   '/sessions/$session': typeof SessionsSessionRoute
@@ -175,6 +183,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/tools': typeof ToolsRoute
   '/utc-to-local': typeof UtcToLocalRoute
   '/white-label': typeof WhiteLabelRoute
   '/sessions/$session': typeof SessionsSessionRoute
@@ -197,6 +206,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/profile'
     | '/register'
+    | '/tools'
     | '/utc-to-local'
     | '/white-label'
     | '/sessions/$session'
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/profile'
     | '/register'
+    | '/tools'
     | '/utc-to-local'
     | '/white-label'
     | '/sessions/$session'
@@ -237,6 +248,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/profile'
     | '/register'
+    | '/tools'
     | '/utc-to-local'
     | '/white-label'
     | '/sessions/$session'
@@ -258,6 +270,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
   RegisterRoute: typeof RegisterRoute
+  ToolsRoute: typeof ToolsRoute
   UtcToLocalRoute: typeof UtcToLocalRoute
   WhiteLabelRoute: typeof WhiteLabelRoute
   SessionsSessionRoute: typeof SessionsSessionRoute
@@ -364,6 +377,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tools': {
+      id: '/tools'
+      path: '/tools'
+      fullPath: '/tools'
+      preLoaderRoute: typeof ToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/utc-to-local': {
       id: '/utc-to-local'
       path: '/utc-to-local'
@@ -410,6 +430,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
   RegisterRoute: RegisterRoute,
+  ToolsRoute: ToolsRoute,
   UtcToLocalRoute: UtcToLocalRoute,
   WhiteLabelRoute: WhiteLabelRoute,
   SessionsSessionRoute: SessionsSessionRoute,

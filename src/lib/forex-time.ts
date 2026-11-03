@@ -134,6 +134,10 @@ export function formatOffset(min: number): string {
   return `UTC${s}${String(Math.floor(a / 60)).padStart(2, "0")}:${String(a % 60).padStart(2, "0")}`;
 }
 
+export function utcOffsetLabel(date: Date, tz: string): string {
+  return formatOffset(getOffsetMinutes(date, tz));
+}
+
 export function formatTime(date: Date, tz: string, seconds = false, format: "12" | "24" = "24"): string {
   const safeTz = isValidZone(tz) ? tz : "UTC";
   return new Intl.DateTimeFormat("en-GB", {
@@ -263,6 +267,12 @@ export function isUsUkDstGap(date: Date): boolean {
   const londonDst = isDstActive(date, "Europe/London");
   const nyDst = isDstActive(date, "America/New_York");
   return londonDst !== nyDst;
+}
+
+/** Returns an explanatory warning string when the US and UK are in their 5-hour DST mismatch window, or null otherwise. */
+export function ukUsTransitionGap(date: Date): string | null {
+  if (!isUsUkDstGap(date)) return null;
+  return "US/UK DST Transition Gap Active: London and New York are temporarily on mismatched Daylight Saving schedules, expanding the London ∩ New York overlap to 5 hours (300 minutes).";
 }
 
 /** Computes when the overall forex market week next opens (Sunday 17:00 NY) or closes (Friday 17:00 NY). */

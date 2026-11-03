@@ -43,6 +43,16 @@ const TOOLS = [
     title: "Session Guides",
     desc: "Plain-language guides to each session's hours and typical characteristics.",
   },
+  {
+    to: "/tools",
+    title: "Trader Productivity Suite (Pro & Elite)",
+    desc: "Position & risk calculator, discipline guardian, session opportunity planner, trade performance journal, and economic event blackout planner.",
+  },
+  {
+    to: "/pricing",
+    title: "Subscription Plans (Free · Pro · Elite)",
+    desc: "Compare Free, Pro Trader, and Elite Trader tiers or activate your subscription.",
+  },
 ] as const;
 
 function Index() {

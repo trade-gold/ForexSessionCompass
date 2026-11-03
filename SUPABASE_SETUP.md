@@ -1,128 +1,58 @@
 # Supabase Database, Authentication & Administrator Setup Guide
 
-This guide explains how **Forex Session Compass** integrates with Supabase for authentication, user profiles, academy rental access, and administrator management, and how a buyer can set up a brand-new Supabase project from scratch.
+This guide explains how **Forex Session Compass** integrates with Supabase for authentication, user profiles, unified subscriptions (Free, Pro, Elite, and Academy White-Label), trader productivity tools, and administrator management, and how a buyer can set up a brand-new Supabase project from scratch in under 5 minutes.
 
 ## 1. Required Environment Variables
 
-The application reads two environment variables in `src/lib/supabase.ts`:
+The application reads two public environment variables in `.env`:
 
 - `VITE_SUPABASE_URL`: Your Supabase project URL (`https://<project-ref>.supabase.co`)
-- `VITE_SUPABASE_ANON_KEY`: Your Supabase `anon` public API key
+- `VITE_SUPABASE_PUBLISHABLE_KEY`: Your Supabase `anon` / publishable public API key
 
-Never put your `service_role` secret key into `.env` or frontend hosting variables. All privileged operations in this application are handled through PostgreSQL Row-Level Security (RLS) policies and `SECURITY DEFINER` / `SECURITY INVOKER` RPC functions.
+Never put your `service_role` secret key into `.env` or frontend hosting variables. All privileged operations in this application are enforced on the PostgreSQL backend through Row-Level Security (RLS) policies, column-level GRANTs, and `SECURITY DEFINER` / `SECURITY INVOKER` RPC functions with pinned `search_path = ''`.
 
-## 2. Database Schema Overview
+## 2. Database Schema & Chronological Migrations (`supabase/migrations/`)
 
-The database schema is defined across three chronological SQL migrations in `supabase/migrations/`:
+All 6 SQL migrations in `supabase/migrations/` use strict chronological `YYYYMMDDHHMMSS_` prefixes so `npx supabase db push` or manual execution runs cleanly on a brand-new database without dependency ordering errors:
 
-### Migration 1: `supabase/migrations/20261031101444_academy_rental_foundation.sql`
-1. **Table `public.academies`**:
-   - `id` (`uuid`, Primary Key, references `auth.users(id) ON DELETE CASCADE`)
-   - `email` (`text NOT NULL`)
-   - `academy_name` (`text NOT NULL`, 2–120 chars)
-   - `contact_name` (`text NOT NULL`, 2–120 chars)
-   - `phone` (`text`, optional, ≤40 chars)
-   - `country` (`text`, optional, ≤80 chars)
-   - `status` (`text NOT NULL DEFAULT 'pending'`, constrained to `'pending'`, `'active'`, or `'suspended'`)
-   - `activated_at` (`timestamptz`, nullable)
-   - `expires_at` (`timestamptz`, nullable)
-   - `created_at` (`timestamptz NOT NULL DEFAULT now()`)
-   - `updated_at` (`timestamptz NOT NULL DEFAULT now()`)
-2. **Table `public.admins`**:
-   - `user_id` (`uuid`, Primary Key, references `auth.users(id) ON DELETE CASCADE`)
-   - `created_at` (`timestamptz NOT NULL DEFAULT now()`)
-   - All direct table privileges (`SELECT`, `INSERT`, `UPDATE`, `DELETE`) are revoked from `PUBLIC`, `anon`, and `authenticated`. Only `service_role` and `SECURITY DEFINER` functions can access `public.admins`.
-3. **Row-Level & Column-Level Security**:
-   - RLS is enabled on both `public.academies` and `public.admins`.
-   - `authenticated` users are granted `SELECT` on `public.academies` and column-restricted `UPDATE (academy_name, contact_name, phone, country, updated_at) ON public.academies`. Users **cannot** update `status`, `activated_at`, or `expires_at` directly.
-   - Policy `academies_select_own`: Users can `SELECT` their own row (`auth.uid() = id`).
-   - Policy `academies_select_admin`: Administrators (`public.is_admin()`) can `SELECT` all rows in `public.academies`.
-   - Policy `academies_update_own_profile`: Users can `UPDATE` their own row (`auth.uid() = id`).
-4. **PostgreSQL Functions & Triggers**:
-   - `public.is_admin()`: Returns `true` if `auth.uid()` exists in `public.admins`.
-   - `public.handle_new_user()` + trigger `on_auth_user_created` on `auth.users`: Automatically inserts a `pending` row in `public.academies` whenever a new user registers via Supabase Auth, populating `academy_name`, `contact_name`, `phone`, and `country` from `raw_user_meta_data`.
-   - `public.admin_set_academy_access(p_academy_id uuid, p_action text)`: Verifies `public.is_admin()` (raising SQLSTATE `42501` if unauthorized) and executes:
-     - `'activate'`: Sets `status = 'active'`, `activated_at = now()`, `expires_at = now() + interval '30 days'`.
-     - `'renew'`: Sets `status = 'active'` and extends `expires_at` by 30 days from `GREATEST(COALESCE(expires_at, now()), now())`.
-     - `'deactivate'`: Sets `status = 'suspended'`.
-
-### Migration 2: `supabase/migrations/20261031101511_academy_revoke_anon_read.sql`
-- Executes `REVOKE ALL ON public.academies FROM anon;` so unauthenticated visitors have zero table privileges on `public.academies`.
-
-### Migration 3: `supabase/migrations/20261031102101_academy_self_access_status.sql`
-- Creates `public.get_my_academy_access()` (`SECURITY INVOKER`), returning `(academy_name, status, activated_at, expires_at, is_active)` for the currently signed-in user (`WHERE a.id = auth.uid()`), where `is_active` is evaluated by the database server clock:
-  ```sql
-  (a.status = 'active' AND a.expires_at IS NOT NULL AND a.expires_at > now()) AS is_active
-  ```
+1. **`20261031101444_academy_rental_foundation.sql`**:
+   - Creates `public.academies` (user/academy profile & rental state) and `public.admins` (restricted administrator table).
+   - Enables RLS, sets column-restricted `UPDATE` grants on `public.academies`, and creates `public.is_admin()`, `public.handle_new_user()`, and `public.admin_set_academy_access()`.
+2. **`20261031101511_academy_revoke_anon_read.sql`**:
+   - Revokes all privileges on `public.academies` from `anon`.
+3. **`20261031102101_academy_self_access_status.sql`**:
+   - Creates `public.get_my_academy_access()` evaluating active rental windows using the PostgreSQL server clock (`now()`).
+4. **`20261031103000_subscription_plans_payments.sql`**:
+   - Creates `public.plans`, `public.subscriptions`, `public.payments`, `public.app_settings`, and `public.owner_emails` with RLS enabled on all tables.
+   - Creates `public.get_my_entitlements()`, `public.has_feature()`, `public.submit_payment()`, `public.admin_set_subscription()`, `public.admin_review_payment()`, `public.admin_update_plan()`, `public.admin_set_payment_instructions()`, and `public.admin_stats()`.
+5. **`20261031104000_trader_productivity_suite.sql`**:
+   - Creates the 4 user-isolated Pro/Elite trader tables (`public.trader_discipline_rules`, `public.trade_journal_entries`, `public.session_planner_configs`, and `public.economic_risk_events`) gated by both `auth.uid() = user_id` and `public.has_feature(...)`.
+6. **`20261102120000_security_and_commercial_unification.sql`**:
+   - **Defense-in-Depth Hardening**: Explicit table-level `REVOKE` of write/truncate privileges from `anon` and `authenticated` on `plans`, `subscriptions`, `payments`, and `app_settings`; server-enforced `touch_academies_updated_at()` trigger; JSONB payload size constraints (`64 KB` / `256 KB`); per-user row cap triggers (`50,000` journal entries / `5,000` economic events); and unique payment reference index (`payments_unique_reference_idx`) preventing UTR replay fraud.
+   - **Zero-Knowledge Trader Privacy**: Enforces strict owner-only `SELECT` (`auth.uid() = user_id`) on all 4 private trader tables so even if an admin session were compromised, other users' trade journals and PnL notes cannot be read.
+   - **First-Boot Admin Lock & Audit Trail**: Locks `grant_owner_admin()` with `NOT EXISTS (SELECT 1 FROM public.admins)` so auto-promotion can only occur once on an empty admin table, and creates `public.admin_audit_logs` to record every admin action.
+   - **Commercial Unification & Verified Academy Slugs**: Configures turnkey default pricing (`Pro $19/30d`, `Elite $49/30d`, `Academy & Tutor White-Label $99/30d`), synchronizes `public.subscriptions` and `public.academies` bidirectionally across both admin consoles, and adds `academy_slug` + `public.get_verified_academy_brand(p_slug)`.
 
 ## 3. Applying Migrations to a New Supabase Project
 
-If you create a new Supabase project rather than taking transfer of the existing project:
-
-### Method A: Via Supabase SQL Editor (No CLI Required)
-1. Open your Supabase Dashboard → **SQL Editor → New query**.
-2. Paste and run `supabase/migrations/20261031101444_academy_rental_foundation.sql`.
-3. Paste and run `supabase/migrations/20261031101511_academy_revoke_anon_read.sql`.
-4. Paste and run `supabase/migrations/20261031102101_academy_self_access_status.sql`.
-
-### Method B: Via Supabase CLI
+### Method A: Via Supabase CLI (Recommended)
 ```sh
 npx supabase link --project-ref <your-project-ref>
 npx supabase db push
 ```
 
-## 4. Configuring Supabase Authentication Settings
+### Method B: Via Supabase SQL Editor (No CLI Required)
+Open your Supabase Dashboard → **SQL Editor → New query**, and execute the 6 files in `supabase/migrations/` in exact chronological order from `20261031101444_...` through `20261102120000_...`.
 
-In your Supabase Dashboard, navigate to **Authentication**:
+## 4. Bootstrapping Your Administrator Account
 
-1. **URL Configuration (`Authentication → URL Configuration`)**:
-   - **Site URL**: Set to your live production domain (e.g., `https://forex-session-compass.lovable.app`).
-   - **Redirect URLs**: Add the following paths for your production domain (and `http://localhost:5173` or `http://localhost:3000` for local development):
-     - `https://<your-domain>/login`
-     - `https://<your-domain>/login?confirmed=1`
-     - `https://<your-domain>/academy`
-     - `https://<your-domain>/profile`
-2. **Email Provider (`Authentication → Providers → Email`)**:
-   - Enable **Email** provider.
-   - **Confirm email**: Can be toggled **Off** (for instant login after `/register`) or **On** (users receive a confirmation email redirecting to `/login?confirmed=1`; `src/routes/register.tsx` and `src/routes/login.tsx` support both modes).
-   - **Secure email change**: Keep enabled so email updates requested from the User Profile Dashboard require inbox verification.
-
-## 5. Bootstrapping Your Administrator Account
-
-Normal registered users are **never** granted administrator rights automatically. To make your account an administrator:
-
-1. Start the application and register your account via `/register`.
-2. In your Supabase Dashboard, go to **Authentication → Users** and copy your user's **User UID** (UUID).
+1. Register your owner account via `/register`.
+2. In your Supabase Dashboard, go to **Authentication → Users** and copy your **User UID** (UUID).
 3. Open **SQL Editor** in Supabase and run:
    ```sql
+   DELETE FROM public.owner_emails;
    INSERT INTO public.admins (user_id)
    VALUES ('00000000-0000-0000-0000-000000000000') -- Replace with your actual User UID
    ON CONFLICT DO NOTHING;
    ```
-4. Log in to `/academy` (or click **Sync Status**). The **Admin Console** section will now appear in your dashboard sidebar, allowing you to view all registered academies and click **Activate (30d)**, **Renew (+30d)**, or **Deactivate**.
-
-## 6. Optional Database Hardening SQL
-
-To ensure `updated_at` is always set by the PostgreSQL server clock on profile edits rather than accepting a client-supplied timestamp, you may optionally execute the following in the Supabase SQL Editor:
-
-```sql
-REVOKE UPDATE ON public.academies FROM authenticated;
-GRANT UPDATE (academy_name, contact_name, phone, country) ON public.academies TO authenticated;
-
-CREATE OR REPLACE FUNCTION public.touch_academies_updated_at()
-RETURNS trigger
-LANGUAGE plpgsql
-SECURITY INVOKER
-SET search_path = ''
-AS $$
-BEGIN
-  NEW.updated_at := now();
-  RETURN NEW;
-END;
-$$;
-
-DROP TRIGGER IF EXISTS on_academies_updated_at ON public.academies;
-CREATE TRIGGER on_academies_updated_at
-  BEFORE UPDATE ON public.academies
-  FOR EACH ROW EXECUTE FUNCTION public.touch_academies_updated_at();
-```
+4. Log in and visit `/admin` (Owner Console for plans, pricing, payments & subscriptions) or `/academy` (User & Academy Profile Dashboard).

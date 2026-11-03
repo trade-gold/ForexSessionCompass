@@ -13,6 +13,7 @@ export interface BrandConfig {
   sessions?: SessionId[] | undefined;
   labels?: Partial<Record<SessionId, string | undefined>> | undefined;
   embed?: boolean | undefined;
+  academy?: string | undefined;
 }
 
 export const SERVICE_PRICES = { basic: 10, advanced: 25 } as const;
@@ -27,6 +28,7 @@ export const DEMO_CONFIG: BrandConfig = {
   fmt: "12",
   sessions: ["london", "newyork"],
   labels: { london: "London Killzone", newyork: "NY Killzone" },
+  academy: "apex",
 };
 
 export const ACADEMY_PRESETS: { id: string; label: string; summary: string; config: BrandConfig }[] = [
@@ -55,6 +57,7 @@ export const ACADEMY_PRESETS: { id: string; label: string; summary: string; conf
         london: "London Liquidity",
         newyork: "NY Overlap Desk",
       },
+      academy: "mumbai-fx",
     },
   },
   {
@@ -75,6 +78,7 @@ export const ACADEMY_PRESETS: { id: string; label: string; summary: string; conf
         london: "London Prime",
         newyork: "New York Desk",
       },
+      academy: "meridian",
     },
   },
 ];
@@ -152,6 +156,14 @@ export function escapeHtml(value: string): string {
 
 const HEX_COLOR_RE = /^#[0-9a-f]{6}$/i;
 const SAFE_MONOGRAM_RE = /^[A-Za-z0-9 +.&_-]{1,12}$/;
+const SAFE_ACADEMY_SLUG_RE = /^[a-z0-9-]{2,60}$/;
+
+export function sanitizeAcademySlug(raw: unknown): string | undefined {
+  if (typeof raw !== "string") return undefined;
+  const cleaned = raw.trim().toLowerCase();
+  if (!SAFE_ACADEMY_SLUG_RE.test(cleaned)) return undefined;
+  return cleaned;
+}
 
 function sanitizeLogo(logoRaw: string | undefined): string | undefined {
   if (!logoRaw) return undefined;
@@ -159,6 +171,7 @@ function sanitizeLogo(logoRaw: string | undefined): string | undefined {
     try {
       const parsed = new URL(logoRaw);
       if (parsed.protocol !== "https:") return undefined;
+      if (parsed.username || parsed.password) return undefined;
       if (/[\s"'<>`]/.test(logoRaw)) return undefined;
       return logoRaw;
     } catch {
@@ -183,6 +196,7 @@ export function parseBrandConfig(search: Record<string, unknown>): BrandConfig {
   const logoRaw = text("logo", 2048);
   const accentRaw = text("accent");
   const accent2Raw = text("accent2");
+  const academy = sanitizeAcademySlug(search["academy"]);
   const sessionsRaw = text("sessions")
     ?.split(",")
     .filter((id): id is SessionId => SESSIONS.some((s) => s.id === id));
@@ -212,12 +226,13 @@ export function parseBrandConfig(search: Record<string, unknown>): BrandConfig {
     sessions: sessionsRaw?.length ? [...new Set(sessionsRaw)] : undefined,
     labels,
     embed: embedRaw === "1",
+    ...(academy ? { academy } : {}),
   };
 }
 
 export function configSearch(config: BrandConfig): Record<string, string> {
   const out: Record<string, string> = {};
-  for (const k of ["brand", "title", "logo", "accent", "accent2", "tz", "fmt"] as const) {
+  for (const k of ["brand", "title", "logo", "accent", "accent2", "tz", "fmt", "academy"] as const) {
     const val = config[k];
     if (val) out[k] = String(val);
   }
