@@ -19,3 +19,5 @@
 - All account features reuse the managed Cloud client through src/lib/supabase.ts so browser sessions and server-function bearer attachment share one storage and publishable-key configuration.
 - AuthProvider schedules account reads in a separate effect, never inside onAuthStateChange, to avoid auth lock contention.
 - Preserve historical Supabase SQL files verbatim; apply them through the migration tool, which records executed SQL in the Drizzle migration journal.
+
+- Public backend settings (URL, publishable key) are baked into builds via `define` in vite.config.ts because .gitignore excludes .env — without it published sites crash on load. Never put secret keys there.
